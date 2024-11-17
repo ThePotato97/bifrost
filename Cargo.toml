@@ -28,17 +28,17 @@ server = []
 server-banner = ["server", "dep:termcolor", "dep:itertools"]
 
 [dependencies]
-axum = { version = "0.8.1", features = ["json", "tokio", "macros", "multipart"], default-features = false }
-axum-core = "0.5.0"
-axum-server = { version = "0.7.1", features = ["rustls", "tls-rustls-no-provider"], default-features = false }
-bytes = "1.9.0"
-chrono = { version = "0.4.39", features = ["clock", "serde"], default-features = false }
-clap = { version = "4.5.27", features = ["std", "color", "derive"], default-features = false }
-config = { version = "0.15.7", default-features = false, features = ["yaml"] }
-futures = "0.3.31"
-hyper = "1.6.0"
-iana-time-zone = "0.1.61"
-log = "0.4.25"
+axum = { version = "0.7.5", features = ["macros"] }
+axum-core = "0.4.3"
+axum-server = { version = "0.6.0", features = ["rustls", "tls-rustls"] }
+bytes = "1.7.1"
+chrono = { version = "0.4.38", features = ["serde"] }
+clap = { version = "4.5.17", features = ["color", "derive"] }
+config = { version = "0.14.0", default-features = false, features = ["yaml"] }
+futures = "0.3.30"
+hyper = "1.4.1"
+iana-time-zone = "0.1.60"
+log = "0.4.22"
 mac_address = { version = "1.1.7", features = ["serde"] }
 mdns-sd = "0.13.1"
 mime = "0.3.17"

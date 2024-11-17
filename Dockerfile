@@ -2,7 +2,12 @@
 ARG RUST_VERSION=1.85
 FROM rust:${RUST_VERSION}-slim-bookworm AS build
 WORKDIR /app
+
+# Copy necessary files for building
 COPY LICENSE LICENSE
+COPY src/ src/
+COPY Cargo.toml Cargo.toml
+COPY Cargo.lock Cargo.lock
 
 RUN --mount=type=bind,source=doc,target=doc \
     --mount=type=bind,source=src,target=src \
@@ -16,12 +21,13 @@ cargo build --locked --release
 cp target/release/bifrost /bifrost
 EOF
 
-
 # Final Stage
-FROM debian:bookworm-slim AS final
+FROM alpine:latest
 
-COPY --from=build /bifrost /app/bifrost
+# Copy the binary from the build stage
+COPY --from=build /bifrost /bifrost
 
-WORKDIR /app
+# Set the binary as the entrypoint
+ENTRYPOINT ["/bifrost"]
 
-CMD ["/app/bifrost"]
+CMD ["/bifrost"]
