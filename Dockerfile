@@ -5,6 +5,7 @@ FROM rust:${RUST_VERSION}-alpine AS build
 # Install dependencies for building Rust applications with musl
 RUN apk add --no-cache musl-dev
 
+# Set the working directory to /app
 WORKDIR /app
 
 # Copy necessary files for building
@@ -13,17 +14,21 @@ COPY src/ src/
 COPY Cargo.toml Cargo.toml
 COPY Cargo.lock Cargo.lock
 
-# Build the project using musl (no need for the `--mount` flag in a Dockerfile)
+# Build the project using musl
 RUN cargo build --target x86_64-unknown-linux-musl --locked --release
-RUN cp target/x86_64-unknown-linux-musl/release/bifrost /bifrost
+
+# Copy the built binary to the root of the final image
+RUN cp target/x86_64-unknown-linux-musl/release/bifrost /app/bifrost
 
 # Final Stage
 FROM alpine:latest
 
+# Set /app as the working directory in the final image
+WORKDIR /app
+
 # Copy the binary from the build stage
-COPY --from=build /bifrost /bifrost
+COPY --from=build /app/bifrost /app/bifrost
 
 # Set the binary as the entrypoint
-ENTRYPOINT ["/bifrost"]
-
-CMD ["/bifrost"]
+ENTRYPOINT ["/app/bifrost"]
+CMD ["/app/bifrost"]
