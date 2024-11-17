@@ -53,7 +53,7 @@ impl Default for ApiShortConfig {
             name: "Bifrost Bridge".to_string(),
             replacesbridgeid: None,
             starterkitid: String::new(),
-            swversion: "1966060010".to_string(),
+            swversion: "1967054020".to_string(),
         }
     }
 }

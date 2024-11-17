@@ -1,24 +1,29 @@
-# Builing Stage
+# Building Stage
 ARG RUST_VERSION=1.80.1
-FROM rust:${RUST_VERSION}-slim-bookworm AS build
+FROM rust:${RUST_VERSION}-alpine AS build
+
+# Install dependencies for building Rust applications with musl
+RUN apk add --no-cache musl-dev
+
 WORKDIR /app
+
+# Copy necessary files for building
 COPY LICENSE LICENSE
+COPY src/ src/
+COPY Cargo.toml Cargo.toml
+COPY Cargo.lock Cargo.lock
 
-RUN --mount=type=bind,source=src,target=src \
-    --mount=type=bind,source=Cargo.toml,target=Cargo.toml \
-    --mount=type=bind,source=Cargo.lock,target=Cargo.lock \
-    <<EOF
-set -e
-cargo build --locked --release
-cp target/release/bifrost /bifrost
-EOF
-
+# Build the project using musl (no need for the `--mount` flag in a Dockerfile)
+RUN cargo build --target x86_64-unknown-linux-musl --locked --release
+RUN cp target/x86_64-unknown-linux-musl/release/bifrost /bifrost
 
 # Final Stage
-FROM debian:bookworm-slim AS final
+FROM alpine:latest
 
-COPY --from=build /bifrost /app/bifrost
+# Copy the binary from the build stage
+COPY --from=build /bifrost /bifrost
 
-WORKDIR /app
+# Set the binary as the entrypoint
+ENTRYPOINT ["/bifrost"]
 
-CMD ["/app/bifrost"]
+CMD ["/bifrost"]
