@@ -567,10 +567,10 @@ impl ApiLight {
                     .map(|dim| ((dim.brightness * 2.54) as u32).max(1)),
                 hue: None,
                 sat: None,
-                effect: None,
+                effect: Some("none".into()),
                 xy: light.color.clone().map(|col| col.xy.into()),
                 ct: light.color_temperature.clone().and_then(|ct| ct.mirek),
-                alert: String::new(),
+                alert: "select".into(),
                 colormode: Some(colormode),
                 mode: "homeautomation".to_string(),
                 reachable: true,
@@ -594,8 +594,8 @@ impl ApiLight {
                         "max": 500,
                         "min": 153
                     },
-                    "maxlumen": 300,
-                    "mindimlevel": 200
+                    "maxlumen": 800,
+                    "mindimlevel": 10
                 },
                 "streaming": {
                     "proxy": true,
