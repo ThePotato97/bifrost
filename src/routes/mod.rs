@@ -1,7 +1,7 @@
 use axum::response::{IntoResponse, Response};
 use axum::Router;
 use hyper::StatusCode;
-use serde_json::Value;
+use serde_json::{json, Value};
 
 use crate::error::ApiError;
 use crate::hue::api::V2Reply;
@@ -9,6 +9,7 @@ use crate::routes::extractor::Json;
 use crate::server::appstate::AppState;
 
 pub mod api;
+pub mod auth;
 pub mod clip;
 pub mod eventstream;
 pub mod extractor;
@@ -20,7 +21,7 @@ impl IntoResponse for ApiError {
         log::error!("Request failed: {error_msg}");
         let res = Json(V2Reply::<Value> {
             data: vec![],
-            errors: vec![error_msg],
+            errors: vec![json!({"description": error_msg}).to_string()],
         });
 
         let status = match self {
@@ -39,7 +40,7 @@ impl IntoResponse for ApiError {
 pub fn router(appstate: AppState) -> Router<()> {
     Router::new()
         .nest("/api", api::router())
-        .nest("/auth", api::auth_router())
+        .nest("/auth", auth::router())
         .nest("/licenses", licenses::router())
         .nest("/clip/v2/resource", clip::router())
         .nest("/eventstream", eventstream::router())
